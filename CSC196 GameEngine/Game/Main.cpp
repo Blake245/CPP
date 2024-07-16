@@ -1,38 +1,28 @@
-#include "Renderer.h"
-#include "Vector2.h"
-#include "Input.h"
-#include "Particle.h"
-#include "Random.h"
-#include "ETime.h"
-#include "MathUtils.h"
-#include "Model.h"
-#include "Transform.h"
+#include "Engine.h"
+#include "../../Source/Player.h"
+#include "../../Source/Enemy.h"
+#include"Scene.h"
 
-#include <SDL.h>
 #include <iostream>
 #include <vector>
-#include <fmod.hpp>
 	
 int main(int argc, char* argv[])
 {
-	// create systems
-	Renderer renderer;
-	renderer.Initialize();
-	renderer.CreateWindow("Game Engine", 800, 600);
+	g_engine.Initialize();
 
-	Input input;
-	input.Initialize();
+	// create systems
 
 	Time time;
 
+	//create audio system
+	g_engine.GetAudio().AddSound("bass.wav");
+	g_engine.GetAudio().AddSound("snare.wav");
+	g_engine.GetAudio().AddSound("open-hat.wav");
+	g_engine.GetAudio().AddSound("close-hat.wav");
+	g_engine.GetAudio().AddSound("clap.wav");
+	g_engine.GetAudio().AddSound("cowbell.wav");
 	std::vector<Particle> particles;
 	float offset = 0;
-
-		// create audio system
-	FMOD::System* audio;
-	FMOD::System_Create(&audio);
-	void* extradriverdata = nullptr;
-	audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
 
 		// Models
 	std::vector<Vector2> points;
@@ -40,29 +30,22 @@ int main(int argc, char* argv[])
 	points.push_back(Vector2{ -5, -5 });
 	points.push_back(Vector2{ -5, 5 });
 	points.push_back(Vector2{ 5, 0 });
-	Model model{ points, Color{1,0,0} };
-
-	//>> 1 = /2
-	Transform transform({ renderer.getWidth() >> 1, renderer.getHeight() >> 1}, 0, 5);
 
 
-	//play audio when program start
-	FMOD::Sound* sound = nullptr;
-	/*audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
-	audio->playSound(sound, 0, false, nullptr);*/
-	std::vector<FMOD::Sound*> sounds;
-	audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("open-hat.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("close-hat.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("clap.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("cowbell.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
+	// actor
+	Model* model = new Model{ points, Color{ 1, 0, 0 } };
+
+	Scene* scene = new Scene();
+
+	Transform transform({400, 300}, 0, 5);
+	Player* player = new Player(800, transform, model);
+	player->SetDamping(2.0f);
+	scene->AddActor(player);
+
+	Model* enemyModel = new Model{ points, Color{ 1, 0, 1 } };
+	auto enemy = new Enemy(1000, Transform{ {300, 300}, 0, 2 }, enemyModel);
+	scene->AddActor(enemy);
+
 	//main loop
 	bool quit = false;
 	while (!quit)
@@ -71,62 +54,64 @@ int main(int argc, char* argv[])
 		//std::cout << time.GetTime() << std::endl;
 
 		//INPUT
-		input.Update();
+		g_engine.GetInput().Update();
 
-		if (input.GetKeyDown(SDL_SCANCODE_ESCAPE))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			quit = true;
 		}
 
 		//audio input
-		if (input.GetKeyDown(SDL_SCANCODE_B) && !input.GetPrevKeyDown(SDL_SCANCODE_B))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_B) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_B))
 		{
 			//bass
-			audio->playSound(sounds[0], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("bass.wav");
 		}
-		if (input.GetKeyDown(SDL_SCANCODE_V) && !input.GetPrevKeyDown(SDL_SCANCODE_V))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_V) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_V))
 		{
 			//snare
-			audio->playSound(sounds[1], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("snare.wav");
 		}
-		if (input.GetKeyDown(SDL_SCANCODE_N) && !input.GetPrevKeyDown(SDL_SCANCODE_N))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_N) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_N))
 		{
 			//open hat
-			audio->playSound(sounds[2], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("open-hat.wav");
 		}
-		if (input.GetKeyDown(SDL_SCANCODE_H) && !input.GetPrevKeyDown(SDL_SCANCODE_H))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_H) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_H))
 		{
 			//close hat
-			audio->playSound(sounds[3], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("close-hat.wav");
 		}
-		if (input.GetKeyDown(SDL_SCANCODE_C) && !input.GetPrevKeyDown(SDL_SCANCODE_C))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_C) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_C))
 		{
 			//clap
-			audio->playSound(sounds[4], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("clap.wav");
 		}
-		if (input.GetKeyDown(SDL_SCANCODE_G) && !input.GetPrevKeyDown(SDL_SCANCODE_G))
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_G) && !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_G))
 		{
 			//cowbell
-			audio->playSound(sounds[5], 0, false, nullptr);
+			g_engine.GetAudio().PlaySound("cowbell.wav");
 		}
 
 		//Model Movement
 			//input:velocity +-= speed
-		float thrust = 0;
-		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation += Math::DegToRad(- 100) * time.GetDeltaTime();
-		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(100) * time.GetDeltaTime();;
-		if (input.GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
-		if (input.GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -400;
+		/*float thrust = 0;
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation += Math::DegToRad(-100) * time.GetDeltaTime();
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(100) * time.GetDeltaTime();;
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
+		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -400;*/
 		
-		Vector2 velocity = Vector2{thrust, 0.0f}.Rotate(transform.rotation);
-		transform.position += velocity * time.GetDeltaTime();
+		/*Vector2 velocity = Vector2{thrust, 0.0f}.Rotate(transform.rotation);
+		transform.position += velocity * time.GetDeltaTime();*/
 		/*transform.position.x - Math::Wrap(transform.position.x, (float)renderer.getWidth());
 		transform.position.y - Math::Wrap(transform.position.y, (float)renderer.getHeight());*/
 
 		//transform.rotation = transform.rotation + time.GetDeltaTime();
 		//UPDATE
-		Vector2 mousePosition = input.GetMousePosition();
-		if (input.GetMouseButtonDown(0))
+		scene->Update(time.GetDeltaTime());
+
+		Vector2 mousePosition = g_engine.GetInput().GetMousePosition();
+		if (g_engine.GetInput().GetMouseButtonDown(0))
 		{
 			particles.push_back(Particle{ {mousePosition}, randomOnUnitCircle() * randomf(10, 200), randomf(1, 3)});
 		}
@@ -139,15 +124,15 @@ int main(int argc, char* argv[])
 		}
 
 		//audio
-		audio->update();
+		//g_engine.GetAudio().update();
 
 		//DRAW
 		// clear screen
-		renderer.SetColor(0, 0, 0, 0);
-		renderer.BeginFrame();
+		g_engine.GetRenderer().SetColor(0, 0, 0, 0);
+		g_engine.GetRenderer().BeginFrame();
 
 		//draw circle
-		/*renderer.SetColor(255, 255, 255, 0);
+		g_engine.GetRenderer().SetColor(255, 255, 255, 0);
 		float radius = 200;
 		offset += (90 * time.GetDeltaTime());
 		for (float angle = 0; angle < 360; angle += 360 / 120)
@@ -155,23 +140,23 @@ int main(int argc, char* argv[])
 			float x = Math::Cos(Math::DegToRad(angle + offset)) * Math::Sin(offset * 0.01f + angle) * radius;
 			float y = Math::Sin(Math::DegToRad(angle + offset)) * Math::Sin(offset * 0.01f + angle) * radius;
 
-			renderer.SetColor(random(256), random(256), random(256), 0);
-			renderer.DrawRect(x + 400, y + 300, randomf(1, 4), randomf(1, 4));
-		}*/
+			g_engine.GetRenderer().SetColor(random(256), random(256), random(256), 0);
+			//g_engine.GetRenderer().DrawRect(x + 400, y + 300, randomf(1, 4), randomf(1, 4));
+		}
 
 		// draw particle
-		renderer.SetColor(255, 255, 255, 0);
+		g_engine.GetRenderer().SetColor(255, 255, 255, 0);
 
 		for (Particle particle : particles)
 		{
-			particle.Draw(renderer);
+			particle.Draw(g_engine.GetRenderer());
 		}
 
 		//draw model
-		model.Draw(renderer, transform);
+		scene->Draw(g_engine.GetRenderer());
 
 		// show screen
-		renderer.EndFrame();
+		g_engine.GetRenderer().EndFrame();
 	}
 
 	return 0;
