@@ -2,6 +2,10 @@
 #include "Engine.h"
 #include "Bullet.h"
 #include "Scene.h"
+#include "GameData.h"
+#include "SpaceGame.h"
+#include <iostream>
+
 
 void Player::Update(float dt)
 {
@@ -20,23 +24,32 @@ void Player::Update(float dt)
 
 	//fire
 	m_fireTimer -= dt;
-	if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_SPACE) && m_fireTimer <= 0)//&& !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_SPACE))
+	if (g_engine.GetInput().GetMouseButtonDown(0) && m_fireTimer <= 0)//&& !g_engine.GetInput().GetPrevKeyDown(SDL_SCANCODE_SPACE))
 	{
-		m_fireTimer = 0.5;
-		std::vector<Vector2> points;
-		points.push_back(Vector2{ 5, 0 });
-		points.push_back(Vector2{ -5, -5 });
-		points.push_back(Vector2{ -5, 5 });
-		points.push_back(Vector2{ 5, 0 });
+		m_fireTimer = 0.25 * m_fireModifier;
+		
+		// shoot at mouse position
+		Vector2 direction = g_engine.GetInput().GetMousePosition() - m_transform.position;
+		float angle = direction.Angle();
 
 		// actor
-		Model* model = new Model{ points, Color{ 1, 1, 0 } };
-		Transform transform{ m_transform.position, m_transform.rotation, 1.0f };
+		Model* model = new Model{ GameData::bulletPoints, Color{ 1, 1, 0 } };
+		Transform transform{ m_transform.position, angle, 1.0f };
 
 		Bullet* bullet = new Bullet(400, transform, model);
 		bullet->SetLifespan(2);
+		bullet->SetTag("Player");
 		m_scene->AddActor(bullet);
 	}
 
 	Actor::Update(dt);
+}
+
+void Player::OnCollision(Actor* actor)
+{
+	if (actor->GetTag() == "Enemy")
+	{
+		m_destroyed = true;
+		dynamic_cast<SpaceGame*>(m_scene->GetGame())->OnPlayerDeath();
+	}
 }

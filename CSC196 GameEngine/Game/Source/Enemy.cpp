@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Scene.h"
+#include "Game.h"
 
 void Enemy::Update(float dt)
 {
@@ -13,4 +14,13 @@ void Enemy::Update(float dt)
 	}
 	
 	Actor::Update(dt);
+}
+
+void Enemy::OnCollision(Actor* actor)
+{
+	if (actor->GetTag() == "Player" || actor->GetTag() == "PlayerBullet")
+	{
+		m_scene->GetGame()->AddPoints(100);
+		m_destroyed = true;
+	}
 }
