@@ -128,7 +128,7 @@ void SpaceGame::Draw(Renderer& renderer)
     case SpaceGame::eState::TITLE:
         //draw text "Game Title"
         m_textTitle->Create(renderer, "Space Adventure", Color{ 1,0,0,1 });
-        m_textTitle->Draw(renderer, g_engine.GetRenderer().getWidth() / 4, 300);
+        m_textTitle->Draw(renderer, g_engine.GetRenderer().getWidth() / 4, 250);
         break;
     case SpaceGame::eState::GAME_OVER:
         m_textTitle->Create(renderer, "GameOver", Color{ 1,0,0,1 });
@@ -142,7 +142,7 @@ void SpaceGame::Draw(Renderer& renderer)
     }
 
     // draw score
-    std::string text = "Score, " + std::to_string(m_score);
+    std::string text = "Score " + std::to_string(m_score);
     m_textScore->Create(renderer, text, { 0, 1, 0, 1 });
     
     //draw lives
@@ -159,7 +159,6 @@ void SpaceGame::OnPlayerDeath()
     {
         m_isHit = true;
         m_lives--;
-        // m_state = (m_lives == 0) ? eState::GAME_OVER : eState::PLAYER_DEAD;
         if (m_lives == 0)
         {
             m_state = eState::GAME_OVER;
