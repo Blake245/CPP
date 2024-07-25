@@ -36,6 +36,9 @@
     <ClCompile Include="Source\Pickup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EnemyShooter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Player.h">
@@ -50,10 +53,13 @@
     <ClInclude Include="Source\GameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SpaceGame.h">
+    <ClInclude Include="Source\Pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Pickup.h">
+    <ClInclude Include="Source\EnemyShooter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpaceGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

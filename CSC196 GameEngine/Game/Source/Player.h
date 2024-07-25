@@ -18,8 +18,16 @@ public:
 	void OnCollision(Actor* actor);
 
 	void SetFireModifier(float modifier) { m_fireModifier = modifier; }
+	void SetFireSpread(bool isTrue) 
+	{ 
+		m_fireSpread = isTrue; 
+		m_powerupTimer = 5;
+	}
 private:
 	float m_speed = 0;
 	float m_fireTimer = 0;
 	float m_fireModifier = 1;
+	bool m_fireSpread = false;
+	float m_spreadAngle = 0;
+	float m_powerupTimer{ 0 };
 };

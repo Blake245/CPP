@@ -19,5 +19,6 @@ public:
 
 private:
 	float m_speed = 0;
-	float m_fireTimer = 0;
+	float m_fireTimer = 2;
+	float m_pickupChance = 0;
 };

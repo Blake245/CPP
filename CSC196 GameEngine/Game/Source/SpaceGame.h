@@ -28,11 +28,17 @@ public:
 	void Draw(Renderer& renderer) override;
 
 	void OnPlayerDeath();
+
+	void AddHealth();
 private:
 	eState m_state{ eState::TITLE };
 	float m_spawnTimer{ 0 };
 	float m_spawnTime{ 0 };
 	float m_stateTimer{ 0 };
+	float m_isHitTimer{ 0 };
+	bool m_isHit = false;
+
+	float m_spawnChance = 0;
 
 	Font* m_font{ nullptr };
 	Font* m_fontLarge{ nullptr };

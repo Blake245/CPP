@@ -5,6 +5,7 @@
 
 #include "Vector2.h"
 #include "Particle.h"
+#include "ParticleSystem.h"
 #include "Random.h"
 
 #include "ETime.h"
@@ -14,6 +15,7 @@
 
 #include <SDL.h>
 #include <fmod.hpp>
+#include <memory>
 
 #define RENDERER g_engine.GetRenderer()
 
@@ -32,14 +34,17 @@ public:
 	Input& GetInput() { return *m_input; }
 	Audio& GetAudio() { return *m_audio; }
 	Time& GetTime() { return *m_time; }
+	ParticleSystem& GetPS() { return *m_ParticleSystem; }
 	bool isQuit() { return quit; }
 private:
 	bool quit{ false };
 
-	Time* m_time{ nullptr };
-	Renderer* m_renderer{ nullptr };
-	Input* m_input{ nullptr };
-	Audio* m_audio{ nullptr };
+	std::unique_ptr<Time> m_time;
+	std::unique_ptr<Renderer> m_renderer;
+	std::unique_ptr<Input> m_input;
+	std::unique_ptr<Audio> m_audio;
+
+	std::unique_ptr<ParticleSystem> m_ParticleSystem;
 };
 //extern same as inline
 extern Engine g_engine;

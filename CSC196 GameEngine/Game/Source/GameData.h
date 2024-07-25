@@ -5,4 +5,7 @@ namespace GameData
 {
 	extern const std::vector<Vector2> shipPoints;
 	extern const std::vector<Vector2> bulletPoints;
+	extern const std::vector<Vector2> enemyPoints;
+	extern const std::vector<Vector2> healthPickup;
+	extern const std::vector<Vector2> spreadPickup;
 }

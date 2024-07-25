@@ -14,13 +14,6 @@ int main(int argc, char* argv[])
 {
 	g_engine.Initialize();
 
-	//Font* font = new Font();
-	//font->Load("Nightmare Codehack.otf", 200);
-	//font->Load("Arcade.ttf", 200);
-
-	//Text* text = new Text(font);
-	//text->Create(g_engine.GetRenderer(), "Hello World", Color{ 1, 1, 1, 1 });
-
 	SpaceGame* game = new SpaceGame(&g_engine);
 	game->Initialize();
 
@@ -35,9 +28,11 @@ int main(int argc, char* argv[])
 		//text->Draw(g_engine.GetRenderer(), 40, 40);
 
 		game->Draw(g_engine.GetRenderer());
+		g_engine.GetPS().Draw(g_engine.GetRenderer());
 
 		g_engine.GetRenderer().EndFrame();
 	}
+	g_engine.Shutdown();
 
 	return 0;
 }
